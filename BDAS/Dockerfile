@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 RUN  apt-get update --fix-missing \
      && apt-get install -y libopenmpi-dev openmpi-bin \
      && apt-get install -y git \
