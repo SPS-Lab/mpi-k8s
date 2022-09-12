@@ -23,7 +23,7 @@ spec:
                 - |
                   MPI_HOST=`cat /etc/volcano/mpiworker.host | tr "\n" ","`;
                   mkdir -p /var/run/sshd; /usr/sbin/sshd;
-                  mpiexec --allow-run-as-root --host ${MPI_HOST} -np 4 lmp -in in.first;
+                  mpiexec --allow-run-as-root --host ${MPI_HOST} -np 4 /home/lammps/lmp -in /home/lammps/in.first;
               image: raijenki/mpik8s:lammps
               name: mpimaster
               ports:
@@ -41,7 +41,7 @@ spec:
                 - -c
                 - |
                   mkdir -p /var/run/sshd; /usr/sbin/sshd -D;
-              image: raijenki/mpik8s:latest
+              image: raijenki/mpik8s:lammps
               name: mpiworker
               ports:
                 - containerPort: 22

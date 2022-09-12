@@ -29,8 +29,8 @@ RUN git clone -b release https://github.com/lammps/lammps.git mylammps \
     && cd build \
     && cmake ../mylammps/cmake/ \
     && cmake --build . \
-    && cp -r ../build/ /home/lammps/ \
     && cd ../ \
+    && mv build/ /home/lammps \
     && rm -rf mylamps/
 RUN git clone https://github.com/SPS-Lab/mpi-k8s \
     && cd mpi-k8s/LAMMPS \
