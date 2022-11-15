@@ -3,14 +3,14 @@ kind: Pod
 metadata:
   name: stream-1
 spec:
-  container:
+  containers:
   - name: stream-1
-    image: raijenki/mpik8s:latest
+    image: raijenki/mpik8s:stream
     command:
       - /bin/sh
       - -c
       - |
-        export OMP_THREADS=1 ./stream_c
+        ./home/stream_c
     resources:
       requests:
         cpu: "1000m"

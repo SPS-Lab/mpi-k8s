@@ -24,7 +24,7 @@ RUN  apt-get update --fix-missing \
      && apt-get install -y ssh \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
-RUN git clone https://github.com/SPS-Lab/mpi-k8s \
+RUN git clone https://github.com/SPS-Lab/mpi-k8s.git \
     && cd mpi-k8s/stream \
     && make \
     && cp stream_c /home/ \
