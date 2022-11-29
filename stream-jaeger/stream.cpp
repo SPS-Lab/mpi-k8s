@@ -44,10 +44,16 @@
 # include <unistd.h>
 # include <math.h>
 # include <float.h>
-# include <stdint.h>
 # include <limits.h>
-#include <inttypes.h>
 # include <sys/time.h>
+
+#include "opentelemetry/exporters/jaeger/jaeger_exporter_factory.h"
+#include "opentelemetry/sdk/trace/simple_processor_factory.h"
+#include "opentelemetry/sdk/trace/tracer_provider_factory.h"
+#include "opentelemetry/trace/provider.h"
+#include "opentelemetry/sdk/version/version.h"
+
+
 
 /*-----------------------------------------------------------------------
  * INSTRUCTIONS:
@@ -180,6 +186,34 @@
 
 
 
+namespace trace     = opentelemetry::trace;
+namespace nostd     = opentelemetry::nostd;
+namespace trace_sdk = opentelemetry::sdk::trace;
+namespace jaeger    = opentelemetry::exporter::jaeger;
+
+namespace
+{
+nostd::shared_ptr<trace::Tracer> get_tracer()
+{
+  auto provider = trace::Provider::GetTracerProvider();
+  return provider->GetTracer("foo_library", OPENTELEMETRY_SDK_VERSION);
+}
+
+void f1()
+{
+  auto scoped_span = trace::Scope(get_tracer()->StartSpan("f1"));
+}
+
+void f2()
+{
+  auto scoped_span = trace::Scope(get_tracer()->StartSpan("f2"));
+
+  f1();
+  f1();
+}
+}
+
+
 static STREAM_TYPE	a[STREAM_ARRAY_SIZE+OFFSET],
 			b[STREAM_ARRAY_SIZE+OFFSET],
 			c[STREAM_ARRAY_SIZE+OFFSET];
@@ -198,7 +232,6 @@ static double	bytes[4] = {
     };
 
 extern double mysecond();
-extern int fmysecond();
 extern void checkSTREAMresults();
 #ifdef TUNED
 extern void tuned_STREAM_Copy();
@@ -212,13 +245,23 @@ extern int omp_get_num_threads();
 
 
 int main() {
-    fmysecond();
+
+	
     int			quantum, checktick();
     int			BytesPerWord;
     int			k;
     ssize_t		j;
     STREAM_TYPE		scalar;
     double		t, times[4][NTIMES];
+
+    opentelemetry::exporter::jaeger::JaegerExporterOptions opts;
+    auto exporter  = jaeger::JaegerExporterFactory::Create(opts);
+    auto processor = trace_sdk::SimpleSpanProcessorFactory::Create(std::move(exporter));
+    std::shared_ptr<opentelemetry::trace::TracerProvider> provider = trace_sdk::TracerProviderFactory::Create(std::move(processor));
+    // Set the global trace provider
+    trace::Provider::SetTracerProvider(provider);
+   
+    f2();
 
     /* --- SETUP --- determine precision and check timing --- */
 
@@ -352,7 +395,7 @@ int main() {
 #endif
 	times[3][k] = mysecond() - times[3][k];
 	}
-	fmysecond();
+
     /*	--- SUMMARY --- */
 
     for (k=1; k<NTIMES; k++) /* note -- skip first iteration */
@@ -431,21 +474,6 @@ double mysecond()
 
         i = gettimeofday(&tp,&tzp);
         return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
-}
-
-int fmysecond()
-{	
-	FILE *pFile;
-	pFile = fopen("/home/daniel/stream.txt", "a");
-        struct timeval tp;
-        struct timezone tzp;
-        int i;
-
-        i = gettimeofday(&tp,&tzp);
-        double time =  ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
-	fprintf(pFile, "%f\n", time);
-	fclose(pFile);
-	return 0;
 }
 
 #ifndef abs

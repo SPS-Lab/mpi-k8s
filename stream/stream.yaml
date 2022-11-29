@@ -3,15 +3,25 @@ kind: Pod
 metadata:
   name: stream-1
 spec:
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: task-pv-claim
   containers:
   - name: stream-1
     image: raijenki/mpik8s:stream
+    volumeMounts:
+      - mountPath: /data
+        name: task-pv-storage
     command:
       - /bin/sh
       - -c
       - |
-        ./home/stream_c
+        ./home/stream_c > /data/stream.txt
     resources:
       requests:
-        cpu: "1000m"
-        memory: "512Mi"
+        cpu: "2000m"
+        memory: "2048Mi"
+      limits:
+        cpu: "4000m"
+        memory: "4096Mi"

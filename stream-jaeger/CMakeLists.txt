@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.20)
+project(STREAM)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_CC_COMPILER g++)
+set(CMAKE_C_COMPILER g++)
+set(CMAKE_CXX_FLAGS "-g -O2 -mcmodel=large")
+set(CMAKE_C_FLAGS "-g -O2 -mcmodel=large")
+
+list(APPEND CMAKE_PREFIX_PATH "/home/daniel/opentelemetry/lib/cmake/opentelemetry-cpp")
+list(APPEND CMAKE_MODULE_PATH "/home/daniel/mpi-k8s/cmake")
+add_executable(STREAM stream.cpp)
+#find_package(Thrift REQUIRED)
+find_package(CURL REQUIRED)
+find_package(opentelemetry-cpp CONFIG REQUIRED)
+target_include_directories(STREAM PRIVATE /usr/include/thrift/ /home/daniel/opentelemetry/include/ )
+	
+target_link_libraries(STREAM PRIVATE ${CMAKE_THREAD_LIBS_INIT} /home/daniel/opentelemetry/lib/libopentelemetry_trace.a /home/daniel/opentelemetry/lib/libopentelemetry_exporter_jaeger_trace.a /home/daniel/opentelemetry/lib/libopentelemetry_common.a /home/daniel/opentelemetry/lib/libopentelemetry_resources.a  /home/daniel/opentelemetry/lib/libopentelemetry_exporter_otlp_http.a /home/daniel/opentelemetry/lib/libopentelemetry_http_client_curl.a /home/daniel/opentelemetry/lib/libopentelemetry_exporter_otlp_http_client.a /lib/x86_64-linux-gnu/libthrift.a /lib/x86_64-linux-gnu/libthriftnb.a /lib/x86_64-linux-gnu/libcurl.so)

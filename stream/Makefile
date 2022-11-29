@@ -9,5 +9,3 @@ stream_c: stream.c
 
 clean:
 	rm -f stream_f.exe stream_c.exe *.o
-
-

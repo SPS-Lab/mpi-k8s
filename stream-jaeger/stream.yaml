@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stream-1
+spec:
+  containers:
+  - name: stream-1
+    image: raijenki/mpik8s:stream
+    command:
+      - /bin/sh
+      - -c
+      - |
+        ./home/stream_c
+    resources:
+      requests:
+        cpu: "2000m"
+        memory: "2048Mi"
