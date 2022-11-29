@@ -17,7 +17,7 @@ spec:
       - /bin/sh
       - -c
       - |
-        ./home/stream_c > /data/stream.txt
+        ./home/stream_c
     resources:
       requests:
         cpu: "2000m"

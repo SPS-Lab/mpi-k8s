@@ -436,7 +436,7 @@ double mysecond()
 int fmysecond()
 {	
 	FILE *pFile;
-	pFile = fopen("/home/daniel/stream.txt", "a");
+	pFile = fopen("/data/stream.txt", "a+");
         struct timeval tp;
         struct timezone tzp;
         int i;
