@@ -28,6 +28,7 @@ RUN git clone https://github.com/SPS-Lab/mpi-k8s.git \
     && cd mpi-k8s/stream \
     && make \
     && cp stream_c /home/ \
+    && cp stream.c /home/ \
     && apt-get autoremove -y git \
     && apt-get autoremove -y build-essential \
     && apt-get autoremove -y cmake \

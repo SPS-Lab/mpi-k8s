@@ -1,0 +1,19 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: stream-scaling-policy
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       stream-1
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: 400m
+          memory: 800Mi
+        maxAllowed:
+          cpu: 2
+          memory: 4000Mi
+        controlledResources: ["cpu", "memory"]
