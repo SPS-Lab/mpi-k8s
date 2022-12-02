@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O2 -fopenmp
+CFLAGS = -O2 -mcmodel=large -fopenmp
 
 
 all: stream_c

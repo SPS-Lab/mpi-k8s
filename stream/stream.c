@@ -93,7 +93,7 @@
  *          per array.
  */
 #ifndef STREAM_ARRAY_SIZE
-#   define STREAM_ARRAY_SIZE	100000000
+#   define STREAM_ARRAY_SIZE	50000000
 #endif
 
 /*  2) STREAM runs each kernel "NTIMES" times and reports the *best* result
@@ -107,11 +107,11 @@
  */
 #ifdef NTIMES
 #if NTIMES<=1
-#   define NTIMES	50
+#   define NTIMES	30
 #endif
 #endif
 #ifndef NTIMES
-#   define NTIMES	50
+#   define NTIMES	30
 #endif
 
 /*  Users are allowed to modify the "OFFSET" variable, which *may* change the

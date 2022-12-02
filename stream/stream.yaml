@@ -20,7 +20,7 @@ spec:
       containers:
       - name: stream-1
         image: raijenki/mpik8s:stream
-        imagePullPolicy: Always
+        imagePullPolicy: Never
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
@@ -32,8 +32,8 @@ spec:
         resources:
           requests:
             cpu: "200m"
-            memory: "200Mi"
+            memory: "1000Mi"
           limits:
             cpu: "200m"
-            memory: "200Mi"
+            memory: "1000Mi"
       restartPolicy: OnFailure

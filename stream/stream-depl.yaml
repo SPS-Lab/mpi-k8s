@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: stream-1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: stream-1
@@ -30,5 +30,8 @@ spec:
             OMP_NUM_THREADS=1 ./home/stream_c
         resources:
           requests:
-            cpu: "200m"
-            memory: "200Mi"
+            cpu: "50m"
+            memory: "100Mi"
+          limits:
+            cpu: "100m"
+            memory: "300Mi"
