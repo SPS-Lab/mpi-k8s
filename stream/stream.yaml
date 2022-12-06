@@ -28,12 +28,12 @@ spec:
           - /bin/sh
           - -c
           - | 
-            ./home/stream_c
+            OMP_NUM_THREADS=4 ./home/stream_c
         resources:
           requests:
-            cpu: "1000m"
-            memory: "2000Mi"
+            cpu: "500m"
+            memory: "3000Mi"
           limits:
-            cpu: "1000m"
-            memory: "2000Mi"
+            cpu: "500m"
+            memory: "3000Mi"
       restartPolicy: OnFailure
