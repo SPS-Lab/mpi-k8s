@@ -1,0 +1,14 @@
+peng8@dst-intel:~$gcc test_sighandler.c 
+peng8@dst-intel:~$./a.out & 
+[1] 677788
+PID is 677788  and Parent is 677691 
+Start loop run 0.
+      PID is 677788  and Parent is 677691 
+ 
+peng8@dst-intel:~$kill 677788
+Caught SIGTERM! 
+Performing checking point for 5 seconds... 
+peng8@dst-intel:~$     Loop run was interrupted with 1 sec to go, finishing...
+Finished loop run 0.
+done.
+
