@@ -1,25 +1,25 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stream-1
+  name: sgt
 spec:
   manualSelector: true
   selector:
     matchLabels:
-      app: stream-1
+      app: sgt
   backoffLimit: 1
   template:
     metadata:
       labels:
-        app: stream-1
+        app: sgt
     spec:
       volumes:
         - name: task-pv-storage
           persistentVolumeClaim:
             claimName: task-pv-claim
       containers:
-      - name: stream-1
-        image: raijenki/mpik8s:stream
+      - name: sgt
+        image: raijenki/mpik8s:sigwatcher
         imagePullPolicy: Never
         volumeMounts:
           - mountPath: /data
@@ -28,7 +28,7 @@ spec:
           - /bin/sh
           - -c
           - | 
-            OMP_NUM_THREADS=2 ./home/stream_c
+            ./home/a.out 
         resources:
           requests:
             cpu: 1
@@ -37,3 +37,4 @@ spec:
             cpu: 1
             memory: "1500Mi"
       restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 60

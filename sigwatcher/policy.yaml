@@ -1,12 +1,12 @@
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: stream-scaling-policy
+  name: sgt-scaling-policy
 spec:
   targetRef:
     apiVersion: "batch/v1"
     kind:       Job
-    name:       stream-1
+    name:       sgt
   resourcePolicy:
     containerPolicies:
       - containerName: '*'

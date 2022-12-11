@@ -9,6 +9,11 @@ void term(int signum)
 {
    printf("Caught SIGTERM! \n");
    printf("Performing checking point for 5 seconds... \n");
+   	FILE *pFile;
+	pFile = fopen("/data/lalala.txt", "a+");
+  fprintf(pFile, "sigterm was caught!!");
+  	fclose(pFile);
+
    sleep(5);
    done = 1;
 }
@@ -33,9 +38,9 @@ int main(int argc, char *argv[])
       /* sleep returns the number of seconds left if
        * interrupted */
       while (t > 0){
-	printf("\tLoop run was interrupted with %d sec to go, finishing...\n", t);
-	t = sleep(t);
-      }
+	      printf("\tLoop run was interrupted with %d sec to go, finishing...\n", t);
+	      t = sleep(t);
+        }
       printf("Finished loop run %d.\n", loop++);
     }
 
