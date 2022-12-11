@@ -24,11 +24,11 @@ spec:
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
-        command:
-          - /bin/sh
-          - -c
-          - | 
-            OMP_NUM_THREADS=2 ./home/stream_c 50
+        env:
+          - name: OMP_NUM_THREADS
+            value: 2
+        command: ["/home/stream_c"]
+        args: ["50"]
         resources:
           requests:
             cpu: 1

@@ -42,8 +42,6 @@
 /*-----------------------------------------------------------------------*/
 # include <stdio.h>
 # include <unistd.h>
-# include <signal.h>
-# include <string.h>
 # include <math.h>
 # include <float.h>
 # include <stdint.h>
@@ -184,9 +182,6 @@ static double	bytes[4] = {
 int NTIMES;
 extern double mysecond();
 extern int fmysecond();
-extern void term();
-extern int stream_write(int, double[4][NTIMES]);
-extern int stream_load(double[4][NTIMES]);
 extern void checkSTREAMresults();
 #ifdef TUNED
 extern void tuned_STREAM_Copy();
@@ -198,9 +193,6 @@ extern void tuned_STREAM_Triad(STREAM_TYPE scalar);
 extern int omp_get_num_threads();
 #endif
 
-int backup = 0;
-int qq = 0;
-volatile sig_atomic_t done = 0;
 
 int main(int argc, char **argv) {
     //fmysecond();
@@ -209,11 +201,6 @@ int main(int argc, char **argv) {
     int			k;
     ssize_t		j;
     STREAM_TYPE		scalar;
-    struct sigaction action;
-    memset(&action, 0, sizeof(action));
-    action.sa_handler = term;
-    sigaction(SIGTERM, &action, NULL);
-
     if(argc != 2) {
     	printf("The wrong number of arguments is passed!");
 	return 0;
@@ -224,8 +211,8 @@ int main(int argc, char **argv) {
     
 
     double		t, times[4][NTIMES];
-    /* --- SETUP --- determine precision and check timing --- */
 
+    /* --- SETUP --- determine precision and check timing --- */
 
     printf(HLINE);
     printf("STREAM version $Revision: 5.10 $\n");
@@ -317,22 +304,6 @@ int main(int argc, char **argv) {
     scalar = 3.0;
     for (k=0; k<NTIMES; k++)
 	{
-		if(backup == 1) {
-			stream_write(k, times);
-			printf("Finishing execution!!\n");
-			return 0;
-		}
-
-	// Check if k.dat exists, if not do nothing
-	FILE *fp = fopen("/data/k.dat", "r");
-	if (fp != NULL && backup == 0)  { 
-	// file exists, load times
-		stream_load(times);
-		k = k + qq;
-		backup = 2; // Ensure this is executed only once
-		printf("RESUMING...!!\n");
-	}
-	
 	times[0][k] = mysecond();
 #ifdef TUNED
         tuned_STREAM_Copy();
@@ -372,7 +343,6 @@ int main(int argc, char **argv) {
 	    a[j] = b[j]+scalar*c[j];
 #endif
 	times[3][k] = mysecond() - times[3][k];
-
 	}
 	//fmysecond();
     /*	--- SUMMARY --- */
@@ -400,7 +370,7 @@ int main(int argc, char **argv) {
     printf(HLINE);
 
     /* --- Check Results --- */
-    //checkSTREAMresults();
+    checkSTREAMresults();
     printf(HLINE);
 
     return 0;
@@ -453,45 +423,6 @@ double mysecond()
 
         i = gettimeofday(&tp,&tzp);
         return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
-}
-
-int stream_load(double times[4][NTIMES]) {
-	char placebo[3];
-	FILE *f1 = fopen("/data/k.dat", "r");
-	fscanf(f1,"%d", &qq);
-	fclose(f1);
-
-	FILE *f2 = fopen("/data/time.dat", "r");
-	for (int i = 0; i < 4; i++) {
-		for(int j = 0; j < qq; j++) {
-    		fscanf(f2, "%lf\n", &times[i][j]);
-    // check for error here too
-		}
-		fscanf(f2, "%c%c%c\n", &placebo[0], &placebo[1], &placebo[2]);
-	}
-	fclose(f2);
-	}
-
-int stream_write(int k, double time_log[4][NTIMES]) {
-	FILE *f1 = fopen("/data/k.dat", "w");
-	fprintf(f1,"%d",k);
-	fclose(f1);
-
-	FILE *f2 = fopen("/data/time.dat", "w");
-	FILE *f3 = fopen("/data/a.dat", "w");
-	for (int i = 0; i < 4; i++) {
-		for(int j = 0; j < k; j++) {
-    	fprintf(f2, "%f\n", time_log[i][j]);
-    // check for error here too
-		}
-		fprintf(f2, "---\n");
-	}
-	fclose(f2);
-}
-
-void term(int signum) {
-	printf("Caught SIGTERM!!\n");
-	backup = 1;
 }
 
 int fmysecond()
