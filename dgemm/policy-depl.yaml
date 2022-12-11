@@ -1,20 +1,19 @@
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: stream-scaling-policy
+  name: dgemm-scaling-policy
 spec:
   targetRef:
-    apiVersion: "batch/v1"
-    kind:       Job
-    name:       stream-1
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       dgemm
   resourcePolicy:
     containerPolicies:
       - containerName: '*'
         minAllowed:
-          cpu: 1
-          memory: 4000Mi
+          cpu: 400m
+          memory: 800Mi
         maxAllowed:
-          cpu: 1
+          cpu: 2
           memory: 4000Mi
         controlledResources: ["cpu", "memory"]
-

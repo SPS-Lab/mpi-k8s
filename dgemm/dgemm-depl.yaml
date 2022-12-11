@@ -1,26 +1,25 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: stream-1
+  name: dgemm
 spec:
-  manualSelector: true
+  replicas: 1
   selector:
     matchLabels:
-      app: stream-1
-  backoffLimit: 1
+      app: dgemm
   template:
     metadata:
       labels:
-        app: stream-1
+        app: dgemm
     spec:
       volumes:
         - name: task-pv-storage
           persistentVolumeClaim:
             claimName: task-pv-claim
       containers:
-      - name: stream-1
-        image: raijenki/mpik8s:stream
-        imagePullPolicy: Never
+      - name: dgemm
+        image: raijenki/mpik8s:dgemm
+        imagePullPolicy: Always
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
@@ -28,12 +27,8 @@ spec:
           - /bin/sh
           - -c
           - | 
-            OMP_NUM_THREADS=2 ./home/stream_c
+            ./home/mt-dgemm 10000 50000
         resources:
           requests:
-            cpu: 1
-            memory: "1500Mi"
-          limits:
-            cpu: 1
-            memory: "1500Mi"
-      restartPolicy: OnFailure
+            cpu: "200m"
+            memory: "200Mi"

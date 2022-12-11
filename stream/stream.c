@@ -46,9 +46,9 @@
 # include <float.h>
 # include <stdint.h>
 # include <limits.h>
-#include <inttypes.h>
+# include <inttypes.h>
 # include <sys/time.h>
-
+# include <stdlib.h>
 /*-----------------------------------------------------------------------
  * INSTRUCTIONS:
  *
@@ -96,23 +96,6 @@
 #   define STREAM_ARRAY_SIZE	50000000
 #endif
 
-/*  2) STREAM runs each kernel "NTIMES" times and reports the *best* result
- *         for any iteration after the first, therefore the minimum value
- *         for NTIMES is 2.
- *      There are no rules on maximum allowable values for NTIMES, but
- *         values larger than the default are unlikely to noticeably
- *         increase the reported performance.
- *      NTIMES can also be set on the compile line without changing the source
- *         code using, for example, "-DNTIMES=7".
- */
-#ifdef NTIMES
-#if NTIMES<=1
-#   define NTIMES	20
-#endif
-#endif
-#ifndef NTIMES
-#   define NTIMES	20
-#endif
 
 /*  Users are allowed to modify the "OFFSET" variable, which *may* change the
  *         relative alignment of the arrays (though compilers may change the 
@@ -196,7 +179,7 @@ static double	bytes[4] = {
     3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
     3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE
     };
-
+int NTIMES;
 extern double mysecond();
 extern int fmysecond();
 extern void checkSTREAMresults();
@@ -211,13 +194,22 @@ extern int omp_get_num_threads();
 #endif
 
 
-int main() {
-    fmysecond();
+int main(int argc, char **argv) {
+    //fmysecond();
     int			quantum, checktick();
     int			BytesPerWord;
     int			k;
     ssize_t		j;
     STREAM_TYPE		scalar;
+    if(argc != 2) {
+    	printf("The wrong number of arguments is passed!");
+	return 0;
+    }
+    else {
+    	NTIMES = atoi(argv[1]);
+    }
+    
+
     double		t, times[4][NTIMES];
 
     /* --- SETUP --- determine precision and check timing --- */
@@ -352,7 +344,7 @@ int main() {
 #endif
 	times[3][k] = mysecond() - times[3][k];
 	}
-	fmysecond();
+	//fmysecond();
     /*	--- SUMMARY --- */
 
     for (k=1; k<NTIMES; k++) /* note -- skip first iteration */
