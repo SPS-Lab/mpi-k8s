@@ -1,10 +1,10 @@
 CC   = mpicc -fcommon -g
 LD   = mpicc -fcommon -g
-CPPFLAGS = -I. -I/usr/tce/packages/openmpi/openmpi-4.1.2-intel-19.0.4/include
+CPPFLAGS = -I. /usr/lib/x86_64-linux-gnu/openmpi/include
 CPPFLAGS = -I. #-I/usr/include/x86_64-linux-gnu/mpich
 CFLAGS = -fopenmp
 LDFLAGS =
-LDLIBS = -lm -lgomp -L/usr/tce/packages/openmpi/openmpi-4.1.2-intel-19.0.4/lib -lmpi
+LDLIBS = -lm -lgomp -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi
 LDLIBS = -lm -lgomp #-L/usr/lib/x86_64-linux-gnu -lmpi
 
 EXEC = ma.x

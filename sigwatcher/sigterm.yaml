@@ -24,11 +24,7 @@ spec:
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
-        command:
-          - /bin/sh
-          - -c
-          - | 
-            ./home/a.out 
+        command: ["/home/a.out"]
         resources:
           requests:
             cpu: 1
@@ -37,4 +33,4 @@ spec:
             cpu: 1
             memory: "1500Mi"
       restartPolicy: OnFailure
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 30

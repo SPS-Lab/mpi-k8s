@@ -7,12 +7,12 @@ volatile sig_atomic_t done = 0;
 
 void term(int signum)
 {
-   printf("Caught SIGTERM! \n");
-   printf("Performing checking point for 5 seconds... \n");
-   	FILE *pFile;
+  printf("Caught SIGTERM! \n");
+  printf("Performing checking point for 5 seconds... \n");
+  FILE *pFile;
 	pFile = fopen("/data/lalala.txt", "a+");
-  fprintf(pFile, "sigterm was caught!!");
-  	fclose(pFile);
+  fprintf(pFile, "sigterm was caught!\n");
+  fclose(pFile);
 
    sleep(5);
    done = 1;
