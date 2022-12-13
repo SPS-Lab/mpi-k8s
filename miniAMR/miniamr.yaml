@@ -18,14 +18,18 @@ spec:
         spec:
           containers:
             - command:
-                - /bin/sh
+                - /bin/bash
                 - -c
                 - |
                   MPI_HOST=`cat /etc/volcano/mpiworker.host | tr "\n" ","`;
                   mkdir -p /var/run/sshd; /usr/sbin/sshd;
-                  mpiexec --allow-run-as-root --host ${MPI_HOST} -np 1 ma.x --num_refine 4 --max_blocks 9000 --npx 1 --npy 1 --npz 1 --nx 16 --ny 16 --nz 16 --num_objects 1 --object 2 0 -1.71 -1.71 -1.71 0.04 0.04 0.04 1.7 1.7 1.7 0.0 0.0 0.0 --num_tsteps 100;
+                  mpiexec --allow-run-as-root --host ${MPI_HOST} -np 1 -x OMP_NUM_THREADS=8 ma.x --num_refine 4 --max_blocks 9000 --npx 1 --npy 1 --npz 1 --nx 16 --ny 16 --nz 16 --num_objects 1 --object 2 0 -1.71 -1.71 -1.71 0.04 0.04 0.04 1.7 1.7 1.7 0.0 0.0 0.0 --num_tsteps 100;
               image: raijenki/mpik8s:miniamr
+              imagePullPolicy: Always
               name: mpimaster
+              env:
+                - name: OMP_NUM_THREADS
+                  value: "8"
               ports:
                 - containerPort: 22
                   name: mpijob-port
@@ -37,12 +41,13 @@ spec:
         spec:
           containers:
             - command:
-                - /bin/sh
+                - /bin/bash
                 - -c
                 - |
-                  mkdir -p /var/run/sshd; /usr/sbin/sshd -D;
+                  mkdir -p /var/run/sshd; env OMP_NUM_THREADS=4 /usr/sbin/sshd -D;
               image: raijenki/mpik8s:miniamr
               name: mpiworker
+              imagePullPolicy: Always
               ports:
                 - containerPort: 22
                   name: mpijob-port

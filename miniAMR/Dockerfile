@@ -16,7 +16,7 @@ RUN /bin/sh -c set -xe \
 RUN rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /run/systemd && echo 'docker' > /run/systemd/container
 RUN  apt-get update --fix-missing \
-     && apt-get install -y libopenmpi-dev openmpi-bin \
+     && apt-get install -y libopenmpi-dev openmpi-bin libomp-dev \
      && apt-get install -y git \
      && apt-get install -y build-essential \
      && apt-get install -y cmake \
