@@ -21,23 +21,20 @@ spec:
       containers:
       - name: stream-1
         image: raijenki/mpik8s:stream
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
+        env:
+          - name: OMP_NUM_THREADS
+            value: "8"
         command: ["/home/stream_c"]
         args: ["50"]
         resources:
           requests:
-            cpu: 4
+            cpu: 1
             memory: "4000Mi"
           limits:
-            cpu: 4
+            cpu: 1
             memory: "4000Mi"
-        env:
-          - name: OMP_NUM_THREADS
-            valueFrom:
-              resourceFieldRef:
-                containerName: stream-1
-                resource: requests.cpu
       restartPolicy: OnFailure

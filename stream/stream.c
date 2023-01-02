@@ -203,7 +203,7 @@ int qq = 0;
 volatile sig_atomic_t done = 0;
 
 int main(int argc, char **argv) {
-    //fmysecond();
+    fmysecond();
     int			quantum, checktick();
     int			BytesPerWord;
     int			k;
@@ -213,8 +213,7 @@ int main(int argc, char **argv) {
     memset(&action, 0, sizeof(action));
     action.sa_handler = term;
     sigaction(SIGTERM, &action, NULL);
-    int numCPU = sysconf(_SC_NPROCESSORS_ONLN);
-    printf("Number of cpus is %d\N", numCPU);
+    
     if(argc != 2) {
     	printf("The wrong number of arguments is passed!");
 	return 0;
@@ -375,7 +374,7 @@ int main(int argc, char **argv) {
 	times[3][k] = mysecond() - times[3][k];
 
 	}
-	//fmysecond();
+	fmysecond();
     /*	--- SUMMARY --- */
 
     for (k=1; k<NTIMES; k++) /* note -- skip first iteration */
