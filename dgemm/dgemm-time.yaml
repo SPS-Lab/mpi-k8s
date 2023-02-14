@@ -1,43 +1,39 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stream
+  name: dgemm
 spec:
   manualSelector: true
   selector:
     matchLabels:
-      app: stream
-  backoffLimit: 4
+      app: dgemm
+  backoffLimit: 1
   ttlSecondsAfterFinished: 600
   template:
     metadata:
       labels:
-        app: stream
+        app: dgemm
     spec:
-      volumes:
-        - name: task-pv-storage
-          persistentVolumeClaim:
-            claimName: task-pv-claim
       containers:
-      - name: stream
-        image: raijenki/mpik8s:stream
+      - name: dgemm
+        image: raijenki/mpik8s:dgemm
         imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: /data
-            name: task-pv-storage
-        command: ["/home/stream_c"]
-        args: ["2000"]
+        command: 
+          - /bin/bash 
+          - -c 
+          - | 
+            time /home/mt-dgemm 2000 500
         resources:
           requests:
             cpu: 1
-            memory: "4000Mi"
+            memory: "256Mi"
           limits:
             cpu: 1
-            memory: "4000Mi"
+            memory: "256Mi"
         env:
           - name: OMP_NUM_THREADS
             valueFrom:
               resourceFieldRef:
-                containerName: stream
+                containerName: dgemm
                 resource: requests.cpu
       restartPolicy: OnFailure

@@ -16,18 +16,19 @@ RUN /bin/sh -c set -xe \
 RUN rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /run/systemd && echo 'docker' > /run/systemd/container
 RUN  apt-get update --fix-missing \
-     && apt-get install -y libopenmpi-dev openmpi-bin \
+     && apt-get install -y libopenmpi-dev openmpi-bin libomp-dev \
      && apt-get install -y git \
      && apt-get install -y build-essential \
      && apt-get install -y cmake \
      && apt-get install -y libopenblas-dev \
-     && apt-get install -y ssh time \
+     && apt-get install -y ssh \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
-RUN git clone https://github.com/SPS-Lab/mpi-k8s.git \
-    && cd mpi-k8s/dgemm \
+RUN git clone https://github.com/SPS-Lab/mpi-k8s \
+    && cd mpi-k8s/miniAMR/openmp \
     && make \
-    && cp mt-dgemm /home/ \
+    && cp ma.x /home/ \
+    && cd /home/ \ 
     && apt-get autoremove -y git \
     && apt-get autoremove -y build-essential \
     && apt-get autoremove -y cmake \

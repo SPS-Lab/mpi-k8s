@@ -1,43 +1,46 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stream
+  name: stream-1
 spec:
   manualSelector: true
   selector:
     matchLabels:
-      app: stream
-  backoffLimit: 4
+      app: stream-1
+  backoffLimit: 10
   ttlSecondsAfterFinished: 600
   template:
     metadata:
       labels:
-        app: stream
+        app: stream-1
     spec:
       volumes:
         - name: task-pv-storage
           persistentVolumeClaim:
             claimName: task-pv-claim
       containers:
-      - name: stream
+      - name: stream-1
         image: raijenki/mpik8s:stream
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         volumeMounts:
           - mountPath: /data
             name: task-pv-storage
-        command: ["/home/stream_c"]
-        args: ["2000"]
+        command:
+          - /bin/bash
+          - -c
+          - |
+            time /home/stream_c 2000
         resources:
           requests:
-            cpu: 1
+            cpu: 2
             memory: "4000Mi"
           limits:
-            cpu: 1
+            cpu: 2
             memory: "4000Mi"
         env:
           - name: OMP_NUM_THREADS
             valueFrom:
               resourceFieldRef:
-                containerName: stream
+                containerName: stream-1
                 resource: requests.cpu
       restartPolicy: OnFailure

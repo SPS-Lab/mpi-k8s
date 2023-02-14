@@ -21,7 +21,7 @@ RUN  apt-get update --fix-missing \
      && apt-get install -y build-essential \
      && apt-get install -y cmake \
      && apt-get install -y libopenblas-dev \
-     && apt-get install -y ssh \
+     && apt-get install -y ssh time \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/SPS-Lab/mpi-k8s.git \

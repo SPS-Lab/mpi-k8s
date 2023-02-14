@@ -11,4 +11,4 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/tmp/k3dvol"
+    path: "/home/daniel/k3dvol"

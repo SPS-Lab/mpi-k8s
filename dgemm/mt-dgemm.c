@@ -23,6 +23,7 @@
 // Vendor may modify this call to provide higher resolution
 // timing if required
 // ------------------------------------------------------- //
+
 double get_seconds() {
 	struct timeval now;
 	gettimeofday(&now, NULL);
