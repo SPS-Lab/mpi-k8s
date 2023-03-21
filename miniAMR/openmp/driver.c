@@ -33,9 +33,25 @@
 #include "timer.h"
 #include "proto.h"
 
-// Main driver for program.
-void driver(void)
-{
+/*int stream_load(double times[4][NTIMES]) {
+	char placebo[3];
+	FILE *f1 = fopen("/data/k.dat", "r");
+	fscanf(f1,"%d", &qq);
+	fclose(f1);
+
+	FILE *f2 = fopen("/data/time.dat", "r");
+	for (int i = 0; i < 4; i++) {
+		for(int j = 0; j < qq; j++) {
+    		fscanf(f2, "%lf\n", &times[i][j]);
+    // check for error here too
+		}
+		fscanf(f2, "%c%c%c\n", &placebo[0], &placebo[1], &placebo[2]);
+	}
+	fclose(f2);
+}*/
+
+
+void driver(void) {
    int ts, var, start, number, stage, comm_stage, calc_stage, done, in;
    double t1, t2, t3, t4;
    double sum, delta = 1.0, sim_time;
@@ -61,12 +77,20 @@ void driver(void)
 
    if (use_time) delta = calc_time_step();
    for (sim_time = 0.0, done = comm_stage =calc_stage=0, ts = 1; !done; ts++) {
+      // This is the loop to checkpoint 
       for (stage=0; stage < stages_per_ts; stage++,comm_stage++,calc_stage++) {
+         if(stage == 2) {
+            printf("this should write");
+            amr_write(grid_sum, sum, num_vars, stage, comm_stage, calc_stage, timer_comm_all, ts);
+         }
+
+
          total_blocks += global_active;
          if (global_active < nb_min)
             nb_min = global_active;
          if (global_active > nb_max)
             nb_max = global_active;
+
          for (start = 0; start < num_vars; start += comm_vars) {
             if (start+comm_vars > num_vars)
                number = num_vars - start;
@@ -76,6 +100,7 @@ void driver(void)
             comm(start, number, comm_stage);
             t4 = timer();
             timer_comm_all += t4 - t3;
+            
             for (var = start; var < (start+number); var ++) {
                stencil_driver(var, calc_stage);
 //#pragma omp parallel for private (bp)
@@ -176,4 +201,18 @@ double calc_time_step(void)
       delta = 1.0;
 
    return delta;
+}
+
+int amr_write(double grid_sum[num_vars], double sum, int num_vars, int stage, int comm_stage, int calc_stage, double timer_comm_all, int ts) {
+	FILE *f1 = fopen("/home/daniel/Desktop/paper-wocc/miniamr/openmp/grid.dat", "w");
+
+   int var;
+   for (var = 0; var < num_vars; var++) {
+      fprintf(f1,"%d\n", grid_sum[var]);
+   }
+   fclose(f1);
+
+	//FILE *f2 = fopen("/home/daniel/Desktop/paper-wocc/miniamr/openmp/data.dat", "w");
+   //fprintf(f2,"%lf%d%d%d%d%lf%d", sum, num_vars, stage, comm_stage, calc_stage, timer_comm_all, ts);
+	//fclose(f2);
 }
